@@ -1,0 +1,61 @@
+
+services:
+  book_management:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    env_file:
+      - .env
+    ports:
+      - "3000:5001"
+    depends_on:
+      - book_management_db
+      - book_management_redis
+    environment:
+      UVICORN_PORT: 5001
+      UVICORN_APP: app.main:fastapi_app
+    volumes:
+      - ../home/logs:/opt/logs
+      - ./:/opt/omnex/aqua_pro_ai_agents
+      - ./local_pgdata:/opt/omnex/aqua_pro_ai_agents/db/pgdata
+
+
+  book_management_db:
+    image: postgres:13.6-alpine
+    container_name: db
+    shm_size: 1G
+    volumes:
+      - ./database/pgdata:/var/lib/postgresql/data
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: jk_tech
+      POSTGRES_PASSWORD: jk_tech
+      POSTGRES_DB: book_management_db
+      POSTGRES_HOST_AUTH_METHOD: md5
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+
+#TODO Fix migration container later if time permits
+  book_management_db_migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: migration
+    command:
+      - migration
+    env_file:
+      - .env
+    depends_on:
+      - book_management_db
+
+  book_management_redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    expose:
+      - 6379
+    ports:
+      - 6380:6379

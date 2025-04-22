@@ -1,0 +1,55 @@
+[tool.poetry]
+authors = ["Alpa Dedhia"]
+description = "Book Management Service"
+name = "book_management_service"
+version = "0.1"
+
+[tool.poetry.dependencies]
+fastapi = "0.115.12"
+python = "^3.12"
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+asyncpg = "0.30.0"
+environs = "14.1.1"
+logger = "1.4"
+structlog = "25.2.0"
+pydantic-settings = "2.9.1"
+
+[tool.poetry.dev-dependencies]
+autoflake = "^2.1.0"
+black = "^23.9.1"
+coverage = "^7.3.1"
+flake8 = "^6.1.0"
+isort = "^5.12.0"
+pytest = "^8.3.3"
+pytest-asyncio = "^0.21.1"
+pre-commit = "^3.5.0"
+pytest-mock = "^3.11.1"
+factory-boy = "^3.3.0"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.8.0"]
+
+[tool.pytest.ini_options]
+addopts = "-v"
+asyncio_mode = "auto"
+filterwarnings = []
+markers = ["pytest.mark.asyncio"]
+minversion = "6.0"
+testpaths = ["app/tests"]
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 120
+select = "C, E, F, W, B, B9"
+ignore = "E203, E501, W503"
+exclude = """
+  __init__.py,
+  .venv,
+  venv,
+  __pycache__,
+  .github,
+  .vscode,
+"""
