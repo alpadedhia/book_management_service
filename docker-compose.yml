@@ -17,8 +17,8 @@ services:
       UVICORN_APP: app.main:fastapi_app
     volumes:
       - ../home/logs:/opt/logs
-      - ./:/opt/omnex/aqua_pro_ai_agents
-      - ./local_pgdata:/opt/omnex/aqua_pro_ai_agents/db/pgdata
+      - ./:/opt/jk_tech/book_management
+      - ./local_pgdata:/opt/jk_tech/book_management/db/pgdata
 
 
   book_management_db:

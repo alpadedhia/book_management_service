@@ -4,7 +4,7 @@ from typing import Literal
 from urllib.parse import quote_plus
 
 from environs import Env
-from pydantic import validator
+from pydantic import ValidationInfo, field_validator
 from pydantic_settings import BaseSettings
 from structlog.stdlib import BoundLogger
 
@@ -50,28 +50,17 @@ class Settings(BaseSettings):
     DATABASE_PORT: str = env.str("DATABASE_PORT", "5432")
     DATABASE_DB: str = env.str("DATABASE_DB")
     SQLALCHEMY_DATABASE_URI: str = ""
-    CHECKPOINTER_SQLALCHEMY_DATABASE_URI: str = ""
 
-    @validator("CHECKPOINTER_SQLALCHEMY_DATABASE_URI")
-    def _assemble_checkpointer_db_connection(
-        cls, v: str, values: dict[str, str]
-    ) -> str:
-        return "postgresql://{}:{}@{}:{}/{}".format(
-            values["DATABASE_USER"],
-            quote_plus(values["DATABASE_PASSWORD"]),
-            values["DATABASE_HOSTNAME"],
-            values["DATABASE_PORT"],
-            values["DATABASE_DB"],
-        )
-
-    @validator("SQLALCHEMY_DATABASE_URI")
-    def _assemble_db_connection(cls, v: str, values: dict[str, str]) -> str:
+    @field_validator("SQLALCHEMY_DATABASE_URI", mode="before")
+    @classmethod
+    def _assemble_db_connection(cls, v: str, info: ValidationInfo) -> str:
+        data = info.data
         return "postgresql+asyncpg://{}:{}@{}:{}/{}".format(
-            values["DATABASE_USER"],
-            quote_plus(values["DATABASE_PASSWORD"]),
-            values["DATABASE_HOSTNAME"],
-            values["DATABASE_PORT"],
-            values["DATABASE_DB"],
+            data["DATABASE_USER"],
+            quote_plus(data["DATABASE_PASSWORD"]),
+            data["DATABASE_HOSTNAME"],
+            data["DATABASE_PORT"],
+            data["DATABASE_DB"],
         )
 
     # UVICORN SETTINGS
@@ -81,10 +70,6 @@ class Settings(BaseSettings):
     CACHE_HOST: str = env.str("CACHE_HOST", "localhost")
     CACHE_PORT: int = env.int("CACHE_PORT", 6379)
     CACHE_TTL: int = env.int("CACHE_TTL", 300)
-
-    # LOGGING SETTINGS
-    LOG_LEVEL: Literal["INFO", "DEBUG", "WARN", "ERROR"] = env.str("LOG_LEVEL", "INFO")
-    LOG_JSON_FORMAT: bool = env.bool("LOG_JSON_FORMAT", False)
 
 
 settings: Settings = Settings()  # type: ignore
