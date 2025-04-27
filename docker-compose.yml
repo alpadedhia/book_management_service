@@ -16,10 +16,7 @@ services:
       UVICORN_PORT: 5001
       UVICORN_APP: app.main:fastapi_app
     volumes:
-      - ../home/logs:/opt/logs
       - ./:/opt/jk_tech/book_management
-      - ./local_pgdata:/opt/jk_tech/book_management/db/pgdata
-
 
   book_management_db:
     image: postgres:13.6-alpine

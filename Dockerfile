@@ -53,7 +53,7 @@ RUN pip install -q --no-cache-dir poetry==$POETRY_VERSION \
 FROM python:3.12-slim-bullseye AS base
 
 ENV APP_NAME    book_management
-ENV PREFIX      /opt/book_management
+ENV PREFIX      /opt/jk_tech
 ENV PREFIX_APP  ${PREFIX}/${APP_NAME}
 
 ENV UVICORN_HOST    0.0.0.0

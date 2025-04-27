@@ -1,18 +1,21 @@
 from pydantic import BaseModel
 
-from app.models.api.author import AuthorBase
-from app.models.api.genre import GenreBase
+from app.models.api.author import Author
+from app.models.api.genre import Genre
 
 
-class BookBase(BaseModel):
+class BookRequest(BaseModel):
     title: str
-    year_published: int | None
-    summary: str | None
-    author: AuthorBase
-    genre: GenreBase | None
+    year_published: int | None = None
+    summary: str | None = None
+    authors: list[str]
+    genres: list[str] | None = None
 
 
-class Book(BookBase):
+class BookResponse(BaseModel):
     id: int
-    author_id: int
-    genre_id: int | None
+    title: str
+    authors: list[Author]
+    genres: list[Genre] | None = None
+    year_published: int | None = None
+    summary: str | None = None
